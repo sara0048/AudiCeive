@@ -61,9 +61,27 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/scene_remove"
+            android:id="@+id/scene_images"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@id/scene_link"
+            android:text="IMAGES"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scene_videos"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/scene_images"
+            android:text="VIDEOS"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scene_remove"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/scene_videos"
             android:text="REMOVE"
             />
 
