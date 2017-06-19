@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,53 +9,54 @@
     app:cardUseCompatPadding="true"
     >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center"
-        >
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_name"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
             />
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:scaleType="fitXY"
             android:id="@+id/scene_image"
-            android:layout_below="@id/scene_name"
+            android:layout_gravity="center"
             />
 
         <TextView
+            android:layout_marginTop="1dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_address"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/scene_image"
             android:textSize="19sp"
+            android:textColor="#000000"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_details"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/scene_address"
             />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_link"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/scene_details"
             android:text="LINK"
             />
 
@@ -62,8 +64,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_images"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/scene_link"
             android:text="IMAGES"
             />
 
@@ -71,8 +71,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_videos"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/scene_images"
             android:text="VIDEOS"
             />
 
@@ -80,11 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scene_remove"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/scene_videos"
             android:text="REMOVE"
             />
-
-    </RelativeLayout>
-
+    </LinearLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>

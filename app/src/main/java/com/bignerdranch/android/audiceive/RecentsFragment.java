@@ -25,7 +25,7 @@ import java.util.List;
 public class RecentsFragment extends Fragment {
 
     SharedPreferences sharedpreferences;
-    FloatingActionButton addScene;
+    FloatingActionButton insertScene;
     FloatingActionButton removeScene;
     SharedPreferences.Editor prefsEditor;
     Gson gson = new Gson();
@@ -44,6 +44,15 @@ public class RecentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedpreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        jsonScenes = sharedpreferences.getString("sceneList", "");
+        if (!jsonScenes.isEmpty()) {
+            Type type = new TypeToken<List<Scene>>() {}.getType();
+            ArrayList<Scene> newlist = gson.fromJson(jsonScenes, type);
+            scenes.addAll(newlist);
+        }
+        adapter = new SceneRecycleViewAdapter(scenes, getActivity().getApplication());
+        adapter.setHasStableIds(true);
     }
 
     @Override
@@ -58,28 +67,16 @@ public class RecentsFragment extends Fragment {
         };
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-
-        sharedpreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        jsonScenes = sharedpreferences.getString("sceneList", "");
-        if (!jsonScenes.isEmpty()) {
-            Type type = new TypeToken<List<Scene>>() {
-            }.getType();
-            ArrayList<Scene> newlist = gson.fromJson(jsonScenes, type);
-            scenes.addAll(newlist);
-        }
-
-        adapter = new SceneRecycleViewAdapter(scenes, getActivity().getApplication());
-        adapter.setHasStableIds(true);
-        rv.setAdapter(adapter);
-
-        addScene = (FloatingActionButton) view.findViewById(R.id.add_scene);
-        addScene.setOnClickListener(new View.OnClickListener() {
+        /*
+        insertScene = (FloatingActionButton) view.findViewById(R.id.insert_scene);
+        insertScene.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 rv.getLayoutManager().scrollToPosition(0);
-                adapter.insert(0, new Scene("Lorem Ipsum", "Address", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer luctus tellus vitae sapien tristique, a egestas odio vehicula. Donec at tincidunt tortor. Cras sed lacinia tortor. Vivamus porta egestas ante. Cras dignissim, enim vitae dictum ultricies, lacus nisl dapibus ligula, a sodales dolor dolor in neque. Fusce feugiat at erat non condimentum. Curabitur a aliquam lectus, eu facilisis ex.", "http://www.google.com", R.drawable.test,0));
+                adapter.insert(0, new Scene("Lorem Ipsum", "Address", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer luctus tellus vitae sapien tristique, a egestas odio vehicula. Donec at tincidunt tortor. Cras sed lacinia tortor. Vivamus porta egestas ante. Cras dignissim, enim vitae dictum ultricies, lacus nisl dapibus ligula, a sodales dolor dolor in neque. Fusce feugiat at erat non condimentum. Curabitur a aliquam lectus, eu facilisis ex.", "http://www.google.com", R.drawable.pic0,0));
                 //removeScene.setVisibility(adapter.getScenes().isEmpty()?View.GONE:View.VISIBLE);
             }
         });
+        */
 
         removeScene = (FloatingActionButton) view.findViewById(R.id.remove_scene);
         //removeScene.setVisibility(scenes.isEmpty()?View.GONE:View.VISIBLE);
@@ -127,6 +124,7 @@ public class RecentsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         isStarted = true;
+        rv.setAdapter(adapter);
 
         /*Call your Fragment functions that uses getActivity()
         if (isVisible && isStarted) {
@@ -143,6 +141,10 @@ public class RecentsFragment extends Fragment {
         prefsEditor.putString("sceneList", jsonScenes);
         prefsEditor.apply();
         //Log.d("TAG","jsonCars = " + jsonScenes);
+    }
+
+    public void addScene(Scene scene) {
+        adapter.insert(0, scene);
     }
 
 }
