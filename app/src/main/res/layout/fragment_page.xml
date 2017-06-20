@@ -6,12 +6,12 @@
                                                  android:padding="0dp"
                                                  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/text"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/placeholder"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center"
-              android:text="Click on the button to start recording"/>
+                  android:orientation="horizontal"
+              android:gravity="center"/>
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"

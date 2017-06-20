@@ -25,13 +25,10 @@ import java.util.List;
 public class RecentsFragment extends Fragment {
 
     SharedPreferences sharedpreferences;
-    FloatingActionButton insertScene;
     FloatingActionButton removeScene;
     SharedPreferences.Editor prefsEditor;
     Gson gson = new Gson();
     SceneRecycleViewAdapter adapter;
-    private Boolean isStarted = false;
-    private Boolean isVisible = false;
     private List<Scene> scenes = new ArrayList<>();
     private String jsonScenes;
     private RecyclerView rv;
@@ -67,16 +64,6 @@ public class RecentsFragment extends Fragment {
         };
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-        /*
-        insertScene = (FloatingActionButton) view.findViewById(R.id.insert_scene);
-        insertScene.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                rv.getLayoutManager().scrollToPosition(0);
-                adapter.insert(0, new Scene("Lorem Ipsum", "Address", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer luctus tellus vitae sapien tristique, a egestas odio vehicula. Donec at tincidunt tortor. Cras sed lacinia tortor. Vivamus porta egestas ante. Cras dignissim, enim vitae dictum ultricies, lacus nisl dapibus ligula, a sodales dolor dolor in neque. Fusce feugiat at erat non condimentum. Curabitur a aliquam lectus, eu facilisis ex.", "http://www.google.com", R.drawable.pic0,0));
-                //removeScene.setVisibility(adapter.getScenes().isEmpty()?View.GONE:View.VISIBLE);
-            }
-        });
-        */
 
         removeScene = (FloatingActionButton) view.findViewById(R.id.remove_scene);
         //removeScene.setVisibility(scenes.isEmpty()?View.GONE:View.VISIBLE);
@@ -123,7 +110,6 @@ public class RecentsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        isStarted = true;
         rv.setAdapter(adapter);
 
         /*Call your Fragment functions that uses getActivity()

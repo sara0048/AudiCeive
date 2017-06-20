@@ -13,15 +13,20 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,6 +60,7 @@ public class RecordFragment extends Fragment {
     private int[] previous;
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
+    private LinearLayout placeholder;
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
@@ -70,12 +76,16 @@ public class RecordFragment extends Fragment {
             startRecording();
             mRecordButton.setImageResource(R.drawable.ic_stop_white_36px);
             mRecordButton.setSoundEffectsEnabled(true);
+            placeholder.removeAllViews();
             text.setText("Click on the button to stop recording");
+            placeholder.addView(text);
         } else {
             stopRecording();
             mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
             mRecordButton.setSoundEffectsEnabled(false);
+            placeholder.removeAllViews();
             text.setText("Click on the button to start recording");
+            placeholder.addView(text);
         }
     }
 
@@ -110,7 +120,12 @@ public class RecordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
-        text = (TextView) view.findViewById(R.id.text);
+        placeholder = (LinearLayout) view.findViewById(R.id.placeholder);
+        placeholder.setOrientation(LinearLayout.VERTICAL);
+        text = new TextView(getContext());
+        text.setGravity(Gravity.CENTER);
+        text.setText("Click on the button to start recording");
+        placeholder.addView(text);
         mRecordButton = (FloatingActionButton) view.findViewById(R.id.start_record);
         mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
         mRecordButton.setSoundEffectsEnabled(false);
@@ -364,10 +379,19 @@ public class RecordFragment extends Fragment {
                 @Override
                 public void run() {
                     onRecord(true);
-                    text.setText("Name:\n" + name + "\n"
-                            + "Address:\n" + address + "\n"
-                            + "Details:\n" + details + "\n"
-                            + "Link:\n" + link);
+                    placeholder.removeAllViews();
+                    List<Scene> matchingScene = new ArrayList<>();
+                    matchingScene.add(scene);
+                    RecyclerView showMatchingScene = new RecyclerView(getContext());
+                    showMatchingScene.setLayoutManager(new LinearLayoutManager(getContext()));
+                    showMatchingScene.setHasFixedSize(true);
+                    SceneRecycleViewAdapter showMatchingSceneAdapter = new SceneRecycleViewAdapter(matchingScene, getContext());
+                    showMatchingScene.setAdapter(showMatchingSceneAdapter);
+                    placeholder.addView(showMatchingScene);
+                    TextView footer = new TextView(getContext());
+                    footer.setGravity(Gravity.CENTER);
+                    footer.setText("Click on the button to start recording");
+                    placeholder.addView(footer);
                 }
             });
         }
