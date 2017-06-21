@@ -23,16 +23,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import java.io.*;
-import android.os.Environment;
-import java.nio.ByteBuffer;
 
 // In this case, the fragment displays simple text based on the page
 public class RecordFragment extends Fragment {
@@ -119,7 +114,7 @@ public class RecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_page, container, false);
+        View view = inflater.inflate(R.layout.listen_fragment, container, false);
         placeholder = (LinearLayout) view.findViewById(R.id.placeholder);
         placeholder.setOrientation(LinearLayout.VERTICAL);
         text = new TextView(getContext());

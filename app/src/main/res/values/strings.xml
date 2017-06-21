@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AudiCeive</string>
+    <string name="search_not_found">Search not found</string>
+    <string name="invalid_data">Invalid data received</string>
+    <string name="invalid_query">Please enter a valid search query</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="service_unavailable">Oops!!! Service unavailable. Try later!!!</string>
 </resources>
