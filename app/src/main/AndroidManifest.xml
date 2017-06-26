@@ -24,8 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayImage">
-        </activity>
+        <activity android:name=".DisplayImage"/>
+        <activity android:name=".PlayVideo"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

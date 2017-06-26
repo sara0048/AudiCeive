@@ -6,11 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 3;
+    final int PAGE_COUNT = 4;
     RecordFragment recordFragment = RecordFragment.newInstance();
     RecentsFragment recentsFragment = RecentsFragment.newInstance();
     SearchImageFragment searchImageFragment = SearchImageFragment.newInstance();
-    private String tabTitles[] = new String[] { "Record", "Recents", "Images" };
+    SearchVideoFragment searchVideoFragment = SearchVideoFragment.newInstance();
+    private String tabTitles[] = new String[] { "Record", "Recents", "Images", "Videos" };
     private Context context;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -32,6 +33,8 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
                 return recentsFragment;
             case 2:
                 return searchImageFragment;
+            case 3:
+                return searchVideoFragment;
             default:
                 return PageFragment.newInstance();
         }
