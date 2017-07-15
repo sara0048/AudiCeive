@@ -11,7 +11,16 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
                   android:orientation="horizontal"
-              android:gravity="center"/>
+              android:gravity="center">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/blinking_output"
+            android:background="@android:color/white"
+            />
+</LinearLayout>
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"

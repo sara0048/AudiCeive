@@ -13,6 +13,15 @@
     </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/insert_scene"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        app:fabSize="normal" />
+
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/remove_scene"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

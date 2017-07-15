@@ -27,6 +27,7 @@ public class MainActivity extends FragmentActivity implements MyInterface {
 
         pagerAdapter = new SampleFragmentPagerAdapter(getSupportFragmentManager(), MainActivity.this);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -55,6 +56,30 @@ public class MainActivity extends FragmentActivity implements MyInterface {
             @Override
             public void run() {
                 fragment.addScene(scene);
+            }
+        });
+    }
+
+    public void saveImageString(final CharSequence string) {
+        final SearchImageFragment fragment = (SearchImageFragment) pagerAdapter.getItem(2);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.setString(string);
+                fragment.onImageSearch(1);
+                viewPager.setCurrentItem(2);
+            }
+        });
+    }
+
+    public void saveVideoString(final String string) {
+        final SearchVideoFragment fragment = (SearchVideoFragment) pagerAdapter.getItem(3);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.setString(string);
+                fragment.searchOnYoutube(string);
+                viewPager.setCurrentItem(3);
             }
         });
     }

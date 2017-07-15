@@ -122,7 +122,8 @@ public class SearchImageFragment extends Fragment {
             else {
                 Toast.makeText(this.getActivity(), R.string.invalid_query, Toast.LENGTH_SHORT).show();
             }
-        }else{
+        }
+        else{
             Toast.makeText(this.getActivity(),R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
     }
@@ -136,5 +137,9 @@ public class SearchImageFragment extends Fragment {
     public static void hideSoftKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void setString(CharSequence string) {
+        etQuery.setText(string);
     }
 }

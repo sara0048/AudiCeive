@@ -24,6 +24,8 @@ public class SceneRecycleViewAdapter extends RecyclerView.Adapter<SceneRecycleVi
         TextView sceneAddress;
         TextView sceneDetails;
         Button sceneLink;
+        Button relatedImages;
+        Button relatedVideos;
         ImageView sceneImage;
         Button sceneRemove;
 
@@ -34,6 +36,8 @@ public class SceneRecycleViewAdapter extends RecyclerView.Adapter<SceneRecycleVi
             sceneAddress = (TextView)itemView.findViewById(R.id.scene_address);
             sceneDetails = (TextView) itemView.findViewById(R.id.scene_details);
             sceneLink = (Button) itemView.findViewById(R.id.scene_link);
+            relatedImages = (Button) itemView.findViewById(R.id.related_images);
+            relatedVideos = (Button) itemView.findViewById(R.id.related_videos);
             sceneImage = (ImageView) itemView.findViewById(R.id.scene_image);
             sceneRemove = (Button) itemView.findViewById(R.id.scene_remove);
 
@@ -73,6 +77,17 @@ public class SceneRecycleViewAdapter extends RecyclerView.Adapter<SceneRecycleVi
                 v.getContext().startActivity(myWebLink);
             }
         });
+        sceneViewHolder.relatedImages.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((MainActivity) context).saveImageString(scenes.get(j).query);
+            }
+        });
+        sceneViewHolder.relatedVideos.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((MainActivity) context).saveVideoString(scenes.get(j).query);
+            }
+        });
+
         sceneViewHolder.sceneImage.setImageResource(scenes.get(i).imageID);
 
         sceneViewHolder.sceneRemove.setOnClickListener(new View.OnClickListener() {

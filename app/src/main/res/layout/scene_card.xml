@@ -63,14 +63,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/scene_images"
+            android:id="@+id/related_images"
             android:text="IMAGES"
             />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/scene_videos"
+            android:id="@+id/related_videos"
             android:text="VIDEOS"
             />
 

@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table if not exists scenes " +
-                        "(name varchar(75), address varchar(75), details varchar(65535), link varchar(100), image_id int, scene_id int, primary key (scene_id))"
+                        "(name varchar(75), address varchar(75), details varchar(65535), link varchar(100), query varchar(75), image_id int, scene_id int, primary key (scene_id))"
         );
         db.execSQL(
                 "create table if not exists fingerprints " +
@@ -56,13 +56,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean addScene(String name, String address, String details, String link, int imageID, int sceneID) {
+    public boolean addScene(String name, String address, String details, String link, String query, int imageID, int sceneID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
         values.put("address", address);
         values.put("details", details);
         values.put("link", link);
+        values.put("query", query);
         values.put("image_id", imageID);
         values.put("scene_id", sceneID);
         db.insert("scenes", null, values);
@@ -78,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getSceneInfo(int sceneID) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select name, address, details, link, image_id from scenes " +
+        Cursor res = db.rawQuery("select name, address, details, link, query, image_id from scenes " +
                 "where scene_id=" + sceneID, null);
         return res;
     }

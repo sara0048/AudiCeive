@@ -1,6 +1,9 @@
 package com.bignerdranch.android.audiceive;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -70,20 +74,33 @@ public class SearchVideoFragment extends Fragment {
         return view;
     }
 
-    private void searchOnYoutube(final String keywords) {
-        new Thread(){
-            @Override
-            public void run() {
-                YoutubeHelper yc = new YoutubeHelper(getActivity());
-                searchResults = yc.search(keywords);
-                handler.post(new Runnable() {
+    public void searchOnYoutube(final String keywords) {
+        if (isNetworkAvailable()) {
+            if (!keywords.equals("")) {
+                new Thread(){
                     @Override
                     public void run() {
-                        updateVideosFound();
+                        YoutubeHelper yc = new YoutubeHelper(getActivity());
+                        searchResults = yc.search(keywords);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateVideosFound();
+                            }
+                        });
                     }
-                });
+                }.start();
             }
-        }.start();
+
+            else {
+                videosFound.setAdapter(null);
+                Toast.makeText(this.getActivity(), R.string.invalid_query, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        else {
+            Toast.makeText(this.getActivity(),R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateVideosFound() {
@@ -110,5 +127,15 @@ public class SearchVideoFragment extends Fragment {
             }
         };
         videosFound.setAdapter(adapter);
+    }
+
+    public Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    public void setString(String string) {
+        searchInput.setText(string);
     }
 }
