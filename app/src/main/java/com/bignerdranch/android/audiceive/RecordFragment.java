@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//import pl.droidsonroids.gif.GifImageView;
+
 // In this case, the fragment displays simple text based on the page
 public class RecordFragment extends Fragment {
 
@@ -63,6 +65,8 @@ public class RecordFragment extends Fragment {
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
     private LinearLayout placeholder;
+    //private TextView textview;
+    //private GifImageView giv;
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
@@ -79,15 +83,23 @@ public class RecordFragment extends Fragment {
             mRecordButton.setImageResource(R.drawable.ic_stop_white_36px);
             mRecordButton.setSoundEffectsEnabled(true);
             placeholder.removeAllViews();
-            text.setText("Click on the button to stop recording");
+            /*giv.setImageResource(R.drawable.blinking_output);
+            giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            placeholder.addView(giv);*/
+            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to stop recording");
             placeholder.addView(text);
+            //textview.setText("Click on the button to stop recording");
         } else {
             stopRecording();
             mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
             mRecordButton.setSoundEffectsEnabled(false);
             placeholder.removeAllViews();
-            text.setText("Click on the button to start recording");
+            /*giv.setImageResource(R.drawable.blinking_output);
+            giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            placeholder.addView(giv);*/
+            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to start recording");
             placeholder.addView(text);
+            //textview.setText("Click on the button to start recording");
         }
     }
 
@@ -124,10 +136,16 @@ public class RecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.listen_fragment, container, false);
         placeholder = (LinearLayout) view.findViewById(R.id.placeholder);
         placeholder.setOrientation(LinearLayout.VERTICAL);
+        //textview = (TextView) view.findViewById(R.id.textview);
+        //giv = new GifImageView(getContext());
         text = new TextView(getContext());
         text.setGravity(Gravity.CENTER);
-        text.setText("Click on the button to start recording");
+        /*giv.setImageResource(R.drawable.blinking_output);
+        giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        placeholder.addView(giv);*/
+        text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to start recording");
         placeholder.addView(text);
+        //textview.setText("Click on the button to start recording");
         mRecordButton = (FloatingActionButton) view.findViewById(R.id.start_record);
         mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
         mRecordButton.setSoundEffectsEnabled(false);
@@ -168,7 +186,8 @@ public class RecordFragment extends Fragment {
                 "Leadenhall Market",R.drawable.pic0,0);
         dbHelper.addScene("The Glass House", "2-4 Bull’s Head Passage, Leadenhall Market, London EC3V 1LU",
                 "Opens from 9AM-5PM, Closed on Sat/Sun\n"+
-                "An opticians store.",
+                "An opticians store.\n"+
+                "Items related to eyecare are sold here, including contact lenses, spectacle frames, spectacle lenses and sports eyewear. They also offer the convenience of in-store repairs for most cases of broken glasses. It became famous after being depicted as the Leaky Cauldron pub in Harry Potter. The nearest underground stations are Bank and Monument. One can get here by taking the Tube or the National Rail.",
                 "http://glasshouseopticians.co.uk/",
                 "the glass house leadenhall market",R.drawable.pic1,1);
         dbHelper.addScene("Warner Bro. Studios", "Warner Drive, Leavesden WD25 7LP, UK",
@@ -176,7 +195,7 @@ public class RecordFragment extends Fragment {
                 "https://www.wbstudiotour.co.uk/the-tour-experience/explore#t-2",
                 "Warner Bros. Studios Diagon Alley",R.drawable.pic2,2);
         dbHelper.addScene("Exhibition Hall of Australia House", "Strand, London WC2B 4LA, UK",
-                "The marble-floored and chandeliered Exhibition Hall of Australia House is the home of the Australian Embassy. It was officially opened by King George V on 3 August 1918. Australia House is usually the single largest polling station in Australian federal elections, with more votes being cast at the London polling station than at any polling station in any of the Australian States or Territories.",
+                "The marble-floored and chandeliered Exhibition Hall of Australia House is the home of the Australian Embassy. It was officially opened by King George V on 3 August 1918. Australia House is usually the single largest polling station in Australian federal elections, with more votes being cast at the London polling station than at any polling station in any of the Australian States or Territories. This building is listed under the Planning (Listed Buildings and Conservation Areas) Act 1990 as amended for its special architectural or historic interest.",
                 "https://sourceable.net/australia-house-london-heritage-list/",
                 "Australia House Strand London",R.drawable.pic3,3);
         dbHelper.addScene("Pedestrian Sky Bridge at York Station", "Station Rd, York YO24 1AB, UK",
@@ -200,7 +219,7 @@ public class RecordFragment extends Fragment {
                 "http://www.road-to-the-isles.org.uk/glenfinnan.php",
                 "Loch Shiel",R.drawable.pic8,8);
         dbHelper.addScene("Staircase at Christ Church, Oxford University", "St Aldate's, Oxford OX1 1DP, UK",
-                "Christ Church is a constituent college of the University of Oxford in England.  Christchurch College’s grand 16th century stone staircase and fan-vaulted ceiling was used in the first two Harry Potter films as the staircase leading to the Great Hall. It is noteworthy that the design of the dining hall at Christ Church was an inspiration for the Great Hall at Hogwarts.",
+                "Christ Church is a constituent college of the University of Oxford in England. The college is associated with Christ Church Cathedral, Oxford, which serves as the college chapel and whose dean is ex officio the college head. Christchurch College’s grand 16th century stone staircase and fan-vaulted ceiling was used in the first two Harry Potter films as the staircase leading to the Great Hall. It is noteworthy that the design of the dining hall at Christ Church was an inspiration for the Great Hall at Hogwarts.",
                 "http://movingknowledge.physics.ox.ac.uk/College.html",
                 "Staircase at Christ Church, Oxford University",R.drawable.pic9,9);
         dbHelper.addScene("Warner Bro. Studios", "Warner Drive, Leavesden WD25 7LP, UK",
@@ -407,8 +426,9 @@ public class RecordFragment extends Fragment {
                     placeholder.addView(showMatchingScene);
                     TextView footer = new TextView(getContext());
                     footer.setGravity(Gravity.CENTER);
-                    footer.setText("Click on the button to start recording");
+                    footer.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
                     placeholder.addView(footer);
+                    //textview.setText("Click on the button to start recording");
                 }
             });
         }
