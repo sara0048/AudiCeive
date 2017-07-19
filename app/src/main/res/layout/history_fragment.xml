@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        android:visibility="invisible"/>
 
 
     <android.support.design.widget.FloatingActionButton

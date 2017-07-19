@@ -37,6 +37,8 @@ public class MainActivity extends FragmentActivity implements MyInterface {
             public void onPageSelected(int position) {
                 if (position != 0)
                     pagerAdapter.recordFragment.onPause();
+                if (position == 0)
+                    pagerAdapter.recordFragment.onResume();
             }
 
             @Override

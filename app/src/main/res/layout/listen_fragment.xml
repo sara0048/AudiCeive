@@ -53,6 +53,7 @@
         android:layout_margin="16dp"
         app:fabSize="normal"
         android:id="@+id/start_record"
+        android:visibility="invisible"
         />
 
 </android.support.design.widget.CoordinatorLayout>

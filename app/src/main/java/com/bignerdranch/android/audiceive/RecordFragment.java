@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//import pl.droidsonroids.gif.GifImageView;
-
 // In this case, the fragment displays simple text based on the page
 public class RecordFragment extends Fragment {
 
@@ -65,8 +63,6 @@ public class RecordFragment extends Fragment {
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
     private LinearLayout placeholder;
-    //private TextView textview;
-    //private GifImageView giv;
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
@@ -80,26 +76,18 @@ public class RecordFragment extends Fragment {
                 previous[i] = 0;
             }
             startRecording();
-            mRecordButton.setImageResource(R.drawable.ic_stop_white_36px);
-            mRecordButton.setSoundEffectsEnabled(true);
+            /*mRecordButton.setImageResource(R.drawable.ic_stop_white_36px);
+            mRecordButton.setSoundEffectsEnabled(true);*/
             placeholder.removeAllViews();
-            /*giv.setImageResource(R.drawable.blinking_output);
-            giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            placeholder.addView(giv);*/
-            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to stop recording");
+            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
             placeholder.addView(text);
-            //textview.setText("Click on the button to stop recording");
         } else {
             stopRecording();
-            mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
-            mRecordButton.setSoundEffectsEnabled(false);
-            placeholder.removeAllViews();
-            /*giv.setImageResource(R.drawable.blinking_output);
-            giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            placeholder.addView(giv);*/
+            /*mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
+            mRecordButton.setSoundEffectsEnabled(false);*/
+            /*placeholder.removeAllViews();
             text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to start recording");
-            placeholder.addView(text);
-            //textview.setText("Click on the button to start recording");
+            placeholder.addView(text);*/
         }
     }
 
@@ -136,19 +124,14 @@ public class RecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.listen_fragment, container, false);
         placeholder = (LinearLayout) view.findViewById(R.id.placeholder);
         placeholder.setOrientation(LinearLayout.VERTICAL);
-        //textview = (TextView) view.findViewById(R.id.textview);
-        //giv = new GifImageView(getContext());
         text = new TextView(getContext());
         text.setGravity(Gravity.CENTER);
-        /*giv.setImageResource(R.drawable.blinking_output);
-        giv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        placeholder.addView(giv);*/
-        text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to start recording");
+        text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
         placeholder.addView(text);
         //textview.setText("Click on the button to start recording");
-        mRecordButton = (FloatingActionButton) view.findViewById(R.id.start_record);
+        /*mRecordButton = (FloatingActionButton) view.findViewById(R.id.start_record);
         mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
-        mRecordButton.setSoundEffectsEnabled(false);
+        mRecordButton.setSoundEffectsEnabled(false);*/
 
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -173,6 +156,7 @@ public class RecordFragment extends Fragment {
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
+        onRecord(false);
         // Renew database upon AudioAnalysis parameters change
         //start comment
         /*
@@ -267,6 +251,14 @@ public class RecordFragment extends Fragment {
         super.onPause();
         if (isRecording) {
             onRecord(true);
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(!isRecording){
+            startRecording();
         }
     }
 
@@ -414,7 +406,7 @@ public class RecordFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    onRecord(true);
+                    //onRecord(true);
                     placeholder.removeAllViews();
                     List<Scene> matchingScene = new ArrayList<>();
                     matchingScene.add(scene);
@@ -428,7 +420,6 @@ public class RecordFragment extends Fragment {
                     footer.setGravity(Gravity.CENTER);
                     footer.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
                     placeholder.addView(footer);
-                    //textview.setText("Click on the button to start recording");
                 }
             });
         }
