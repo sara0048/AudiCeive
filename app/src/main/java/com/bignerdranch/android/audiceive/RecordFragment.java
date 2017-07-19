@@ -133,7 +133,7 @@ public class RecordFragment extends Fragment {
         mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
         mRecordButton.setSoundEffectsEnabled(false);*/
 
-        mRecordButton.setOnClickListener(new View.OnClickListener() {
+        /*mRecordButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
                         || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
@@ -142,7 +142,7 @@ public class RecordFragment extends Fragment {
                 else
                     onRecord(isRecording);
             }
-        });
+        });*/
 
         return view;
     }
