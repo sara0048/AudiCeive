@@ -156,7 +156,6 @@ public class RecordFragment extends Fragment {
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
-        onRecord(false);
         // Renew database upon AudioAnalysis parameters change
         //start comment
         /*
@@ -244,6 +243,7 @@ public class RecordFragment extends Fragment {
         }
         */
         //end comment
+        onRecord(false);
     }
 
     @Override
