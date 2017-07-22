@@ -1,7 +1,9 @@
 package com.bignerdranch.android.audiceive;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -48,7 +50,7 @@ public class RecordFragment extends Fragment {
     private short[] audio;
     private TextView text;
     private Timer timer = null;
-    private FloatingActionButton mRecordButton = null;
+    //private FloatingActionButton mRecordButton = null;
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
     private boolean isRecording = false;
@@ -63,6 +65,7 @@ public class RecordFragment extends Fragment {
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
     private LinearLayout placeholder;
+    private boolean grant = true;
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
@@ -243,8 +246,41 @@ public class RecordFragment extends Fragment {
         }
         */
         //end comment
-        onRecord(false);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            onRecord(false);
+        else
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+
+        /*if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            grant = false;
+        while (grant==false) {
+            makeRequest();
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECORD_AUDIO)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Permission required")
+                        .setMessage("Permission to access the microphone is required for this app to record audio.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                makeRequest();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                grant = true;
+        }
+        onRecord(false);*/
     }
+
+    /*protected void makeRequest() {
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+    }*/
 
     @Override
     public void onPause() {
@@ -257,9 +293,12 @@ public class RecordFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        if(!isRecording){
+        if (!isRecording && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             startRecording();
-        }
+        /*if(!isRecording){
+            startRecording();
+        }*/
     }
 
     @Override
