@@ -1,9 +1,7 @@
 package com.bignerdranch.android.audiceive;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,7 +11,6 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,12 +47,10 @@ public class RecordFragment extends Fragment {
     private short[] audio;
     private TextView text;
     private Timer timer = null;
-    //private FloatingActionButton mRecordButton = null;
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
     private boolean isRecording = false;
     private int recordInterval;
-    //private String[] files = {"20000hz.wav", "20150hz.wav", "20300hz.wav", "20450hz.wav", "20600hz.wav", "20750hz.wav", "21000hz.wav", "21150hz.wav", "21300hz.wav", "21450hz.wav", "21600hz.wav", "21750hz.wav", "22000hz.wav"};
     private String[] files = {"20kHz.wav", "20.15kHz.wav", "20.3kHz.wav", "20.45kHz.wav", "20.6kHz.wav", "20.75kHz.wav", "21kHz.wav", "21.15kHz.wav", "21.3kHz.wav", "21.45kHz.wav", "21.6kHz.wav", "21.75kHz.wav", "22kHz.wav"};
     private int[] match;
     private TimerTask recordTask;
@@ -65,33 +60,9 @@ public class RecordFragment extends Fragment {
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
     private LinearLayout placeholder;
-    private boolean grant = true;
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
-    }
-
-    private void onRecord(boolean isRecording) {
-        if (!isRecording) {
-            match = new int[files.length];
-            previous = new int[files.length];
-            for (int i = 0; i < match.length; i++) {
-                previous[i] = 0;
-            }
-            startRecording();
-            /*mRecordButton.setImageResource(R.drawable.ic_stop_white_36px);
-            mRecordButton.setSoundEffectsEnabled(true);*/
-            placeholder.removeAllViews();
-            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
-            placeholder.addView(text);
-        } else {
-            stopRecording();
-            /*mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
-            mRecordButton.setSoundEffectsEnabled(false);*/
-            /*placeholder.removeAllViews();
-            text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick on the button to start recording");
-            placeholder.addView(text);*/
-        }
     }
 
     private void startRecording() {
@@ -131,21 +102,6 @@ public class RecordFragment extends Fragment {
         text.setGravity(Gravity.CENTER);
         text.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
         placeholder.addView(text);
-        //textview.setText("Click on the button to start recording");
-        /*mRecordButton = (FloatingActionButton) view.findViewById(R.id.start_record);
-        mRecordButton.setImageResource(R.drawable.ic_hearing_white_36px);
-        mRecordButton.setSoundEffectsEnabled(false);*/
-
-        /*mRecordButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            0);
-                else
-                    onRecord(isRecording);
-            }
-        });*/
 
         return view;
     }
@@ -247,46 +203,23 @@ public class RecordFragment extends Fragment {
         */
         //end comment
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-            onRecord(false);
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            match = new int[files.length];
+            previous = new int[files.length];
+            for (int i = 0; i < match.length; i++) {
+                previous[i] = 0;
+            }
+            startRecording();
+        }
         else
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-
-        /*if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            grant = false;
-        while (grant==false) {
-            makeRequest();
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECORD_AUDIO)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Permission required")
-                        .setMessage("Permission to access the microphone is required for this app to record audio.")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                makeRequest();
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                grant = true;
-        }
-        onRecord(false);*/
     }
-
-    /*protected void makeRequest() {
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-    }*/
 
     @Override
     public void onPause() {
         super.onPause();
         if (isRecording) {
-            onRecord(true);
+            stopRecording();
         }
     }
 
@@ -296,9 +229,6 @@ public class RecordFragment extends Fragment {
         if (!isRecording && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             startRecording();
-        /*if(!isRecording){
-            startRecording();
-        }*/
     }
 
     @Override
@@ -445,7 +375,6 @@ public class RecordFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //onRecord(true);
                     placeholder.removeAllViews();
                     List<Scene> matchingScene = new ArrayList<>();
                     matchingScene.add(scene);
