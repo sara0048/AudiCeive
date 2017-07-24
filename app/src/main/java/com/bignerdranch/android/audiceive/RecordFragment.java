@@ -9,7 +9,6 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -23,12 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +88,7 @@ public class RecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.listen_fragment, container, false);
+        View view = inflater.inflate(R.layout.record_fragment, container, false);
         placeholder = (LinearLayout) view.findViewById(R.id.placeholder);
         placeholder.setOrientation(LinearLayout.VERTICAL);
         text = new TextView(getContext());

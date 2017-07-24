@@ -24,7 +24,6 @@ import java.util.List;
 public class RecentsFragment extends Fragment {
 
     SharedPreferences sharedpreferences;
-    FloatingActionButton insertScene;
     FloatingActionButton removeScene;
     SharedPreferences.Editor prefsEditor;
     Gson gson = new Gson();
@@ -55,7 +54,7 @@ public class RecentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.history_fragment, container, false);
+        View view = inflater.inflate(R.layout.recents_fragment, container, false);
         rv = (RecyclerView) view.findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity()) {
             public boolean supportsPredictiveItemAnimations() {
@@ -64,18 +63,6 @@ public class RecentsFragment extends Fragment {
         };
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-
-        insertScene = (FloatingActionButton) view.findViewById(R.id.insert_scene);
-        insertScene.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                rv.getLayoutManager().scrollToPosition(0);
-                adapter.insert(0, new Scene("Leadenhall Market", "Gracechurch St, London EC3V 1LT",
-                        "Opens from 10AM-6PM, Closed on Sat/Sun\n" +
-                                "Leadenhall Market is a covered market located in the historic centre of the City of London financial district. Built in 1881, it is London’s most beautiful Victorian market.  The double height entrance is flanked by tall, narrow gabled red brick and Portland stone blocks in a C17 Dutch style. Under the elegant glass roof, there are stalls selling flowers, cheese, meat and other fresh food. A number of commercial retailers are also located in the market, including restaurants, clothes shops and a pen shop.",
-                        "https://www.cityoflondon.gov.uk/things-to-do/leadenhall-market/Pages/default.aspx",
-                        "Leadenhall Market",R.drawable.pic0,0));
-            }
-        });
 
         removeScene = (FloatingActionButton) view.findViewById(R.id.remove_scene);
         //removeScene.setVisibility(scenes.isEmpty()?View.GONE:View.VISIBLE);
