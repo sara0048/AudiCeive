@@ -60,6 +60,7 @@ public class RecordFragment extends Fragment {
     private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
     private MyInterface listener;
     private LinearLayout placeholder;
+    private static String previoustitle="";
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
@@ -85,6 +86,14 @@ public class RecordFragment extends Fragment {
             recorder.stop();
             isRecording = false;
         }
+    }
+
+    public static void setPrevious(String prevtitle) {
+        previoustitle = prevtitle;
+    }
+
+    public static String getPrevious(){
+        return previoustitle;
     }
 
     @Override
@@ -371,7 +380,11 @@ public class RecordFragment extends Fragment {
             sceneInfo.close();
             dbHelper.close();
             final Scene scene = new Scene(name, address, details, link, query, imageID, match);
-            listener.saveScene(scene);
+            if ( !(RecordFragment.getPrevious().equals(name)) || (RecentsFragment.getRemoved()==1) ) {
+                listener.saveScene(scene);
+                RecordFragment.setPrevious(name);
+                RecentsFragment.setRemoved(0);
+            }
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

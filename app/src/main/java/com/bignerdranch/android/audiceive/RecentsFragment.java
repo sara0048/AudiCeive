@@ -31,10 +31,19 @@ public class RecentsFragment extends Fragment {
     private List<Scene> scenes = new ArrayList<>();
     private String jsonScenes;
     private RecyclerView rv;
+    private static int removed;
 
     public static RecentsFragment newInstance() {
         RecentsFragment fragment = new RecentsFragment();
         return fragment;
+    }
+
+    public static void setRemoved(int remove) {
+        removed = remove;
+    }
+
+    public static int getRemoved(){
+        return removed;
     }
 
     @Override
@@ -83,6 +92,7 @@ public class RecentsFragment extends Fragment {
                                 // if this button is clicked, close
                                 // current activity
                                 adapter.removeAll();
+                                setRemoved(1);
                                 //removeScene.setVisibility(adapter.getScenes().isEmpty()?View.GONE:View.VISIBLE);
                             }
                         })
