@@ -99,7 +99,7 @@ public class SceneRecycleViewAdapter extends RecyclerView.Adapter<SceneRecycleVi
 
                 // set dialog message
                 alertDialogBuilder
-                        .setMessage("Are you sure you want to delete this advertisement?")
+                        .setMessage("Are you sure you want to delete this scene?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
