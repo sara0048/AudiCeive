@@ -18,4 +18,8 @@ public class Scene {
         this.imageID = imageID;
         this.sceneID = sceneID;
     }
+
+    public String getName(){
+        return this.name;
+    }
 }

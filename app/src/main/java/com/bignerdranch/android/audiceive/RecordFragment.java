@@ -4,17 +4,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -23,14 +22,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import com.android.volley.VolleyError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,13 +57,11 @@ public class RecordFragment extends Fragment {
     private Thread recordingThread = null;
     private boolean isRecording = false;
     private int recordInterval;
-    private String[] files = {"20kHz.wav", "20.15kHz.wav", "20.3kHz.wav", "20.45kHz.wav", "20.6kHz.wav", "20.75kHz.wav", "21kHz.wav", "21.15kHz.wav", "21.3kHz.wav", "21.45kHz.wav", "21.6kHz.wav", "21.75kHz.wav", "22kHz.wav"};
-    private int[] match;
+    private int currentMaximum;
+    private SparseIntArray match;
     private TimerTask recordTask;
     private RecordRunnable runnable;
-    private DatabaseHelper dbHelper;
-    private int[] previous;
-    private ShowAndSaveSceneRunnable showAndSaveSceneRunnable;
+    private SparseIntArray previous;
     private MyInterface listener;
     private LinearLayout placeholder;
     private static String previoustitle="";
@@ -124,100 +128,14 @@ public class RecordFragment extends Fragment {
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
-        // Renew database upon AudioAnalysis parameters change
-        //start comment
-        /*
-        dbHelper = new DatabaseHelper(getContext());
-        dbHelper.refreshDatabase();
-
-        dbHelper.addScene("Leadenhall Market", "Gracechurch St, London EC3V 1LT",
-                "Opens from 10AM-6PM, Closed on Sat/Sun\n"+
-                "Leadenhall Market is a covered market located in the historic centre of the City of London financial district. Built in 1881, it is London’s most beautiful Victorian market.  The double height entrance is flanked by tall, narrow gabled red brick and Portland stone blocks in a C17 Dutch style. Under the elegant glass roof, there are stalls selling flowers, cheese, meat and other fresh food. A number of commercial retailers are also located in the market, including restaurants, clothes shops and a pen shop.",
-                "https://www.cityoflondon.gov.uk/things-to-do/leadenhall-market/Pages/default.aspx",
-                "Leadenhall Market",R.drawable.pic0,0);
-        dbHelper.addScene("The Glass House", "2-4 Bull’s Head Passage, Leadenhall Market, London EC3V 1LU",
-                "Opens from 9AM-5PM, Closed on Sat/Sun\n"+
-                "An opticians store.\n"+
-                "Items related to eyecare are sold here, including contact lenses, spectacle frames, spectacle lenses and sports eyewear. They also offer the convenience of in-store repairs for most cases of broken glasses. It became famous after being depicted as the Leaky Cauldron pub in Harry Potter. The nearest underground stations are Bank and Monument. One can get here by taking the Tube or the National Rail.",
-                "http://glasshouseopticians.co.uk/",
-                "the glass house leadenhall market",R.drawable.pic1,1);
-        dbHelper.addScene("Warner Bro. Studios", "Warner Drive, Leavesden WD25 7LP, UK",
-                "Warner Bros. Studios, Leavesden is an 80-hectare studio complex in Leavesden in Hertfordshire, in southeast England. Formerly known as Leavesden Film Studios, it is a film and media complex owned by Warner Bros. Warner Bros. Studios, Leavesden is one of only a few places in the United Kingdom where large scale film productions can be made. The studios contain approximately 50,000 m2 (538,196 sq ft) of flexible space and is one of the largest and most state-of-the-art secure filmmaking facilities in the world. From 2000, every one of the Harry Potter films was based out of Leavesden Studios over the following ten years.",
-                "https://www.wbstudiotour.co.uk/the-tour-experience/explore#t-2",
-                "Warner Bros. Studios Diagon Alley",R.drawable.pic2,2);
-        dbHelper.addScene("Exhibition Hall of Australia House", "Strand, London WC2B 4LA, UK",
-                "The marble-floored and chandeliered Exhibition Hall of Australia House is the home of the Australian Embassy. It was officially opened by King George V on 3 August 1918. Australia House is usually the single largest polling station in Australian federal elections, with more votes being cast at the London polling station than at any polling station in any of the Australian States or Territories. This building is listed under the Planning (Listed Buildings and Conservation Areas) Act 1990 as amended for its special architectural or historic interest.",
-                "https://sourceable.net/australia-house-london-heritage-list/",
-                "Australia House Strand London",R.drawable.pic3,3);
-        dbHelper.addScene("Pedestrian Sky Bridge at York Station", "Station Rd, York YO24 1AB, UK",
-                "York railway station is on the East Coast Main Line in the United Kingdom, serving the city of York, North Yorkshire. It is 188 miles 40 chains (303.4 km) down-line from London King's Cross and on the main line it is situated between Doncaster to the south and Thirsk to the north. Despite the small size of the city, York's station is one of the most important on the British railway network because of its role as a key junction approximately halfway between London and Edinburgh. The junction was historically a major site for rolling stock manufacture, maintenance and repair.",
-                "http://www.nationalrail.co.uk/stations_destinations/yrk.aspx",
-                "York Station",R.drawable.pic4,4);
-        dbHelper.addScene("Arched wall between platforms 4 and 5 at King’s Cross Station", "Euston Road, London, Greater London N1 9AL, UK",
-                "King’s Cross railway station is a Central London railway terminus on the northern edge of the city. It is one of the busiest railway stations in the United Kingdom, being the southern terminus of the East Coast Main Line to North East England and Scotland. The station was opened in 1852 by the Great Northern Railway in the Kings Cross area to accommodate the East Coast Main Line. It quickly grew to cater for suburban lines and was expanded several times in the 19th century. In the late 20th century, the area around the station became known for its seedy and downmarket character, and was used as a backdrop for several films as a result.",
-                "https://www.kingscross.co.uk/harry-potters-platform-9-34",
-                "Arched wall between platforms 4 and 5 at King’s Cross Station",R.drawable.pic5,5);
-        dbHelper.addScene("Glenfinnan Viaduct Bridge", "A830 Rd, Glenfinnan PH37 4, UK",
-                "The Glenfinnan Viaduct is a railway viaduct with a curving 21-arch span, located on the West Highland Line in Glenfinnan, Inverness-shire, Scotland and overlooks the Glenfinnan Monument and the waters of Loch Shiel. It is the longest concrete railway bridge in Scotland at 380m and over a height of 30m. To experience this scenery, one can board the Jacobite, which is a steam locomotive hauled tourist train service that operates over part of the West Highland Railway Line. The Jacobite runs a distance of 41 miles between Fort William and Mallaig, passing through an area of great scenic beauty including alongside Loch Eil, Glenfinnan Viaduct and Arisaig. Trains cross with regular service trains at Glenfinnan station.",
-                "http://www.westcoastrailways.co.uk/jacobite/jacobite-steam-train-details.cfm",
-                "Glenfinnan Viaduct Bridge",R.drawable.pic6,6);
-        dbHelper.addScene("Goathland Railway Station", "North York Moors National Park, Cow Wath Bank, Goathland, Whitby YO22 5NF, UK",
-                "Goathland railway station is a station on the North Yorkshire Moors Railway and serves the village of Goathland in the North York Moors National Park, North Yorkshire, England. Dating from 1865, the station served for just 100 years until it closed in 1965. In 1968, Goathland became the headquarters of the fledgling North Yorkshire Moors Railway, opening to passengers again in 1973.",
-                "https://www.nymr.co.uk/goathland-station",
-                "Goathland Railway Station",R.drawable.pic7,7);
-        dbHelper.addScene("Loch Shiel", "Lochaber, Highland, Scotland",
-                "Loch Shiel is a 17 1⁄2-mile-long (28 km) freshwater loch, 120 m (393 ft) deep, situated 12.4 miles west of Fort William in Lochaber, Highland, Scotland. Its nature changes considerably along its length, being deep and enclosed by mountains in the north east and shallow surrounded by bog and rough pasture in the south west, from which end the 4 km River Shiel drains to the sea in Loch Moidart near Castle Tioram. Loch Shiel is only marginally above sea level and was in fact a sea loch a few thousand years ago when sea levels (relative to Scotland) were higher.",
-                "http://www.road-to-the-isles.org.uk/glenfinnan.php",
-                "Loch Shiel",R.drawable.pic8,8);
-        dbHelper.addScene("Staircase at Christ Church, Oxford University", "St Aldate's, Oxford OX1 1DP, UK",
-                "Christ Church is a constituent college of the University of Oxford in England. The college is associated with Christ Church Cathedral, Oxford, which serves as the college chapel and whose dean is ex officio the college head. Christchurch College’s grand 16th century stone staircase and fan-vaulted ceiling was used in the first two Harry Potter films as the staircase leading to the Great Hall. It is noteworthy that the design of the dining hall at Christ Church was an inspiration for the Great Hall at Hogwarts.",
-                "http://movingknowledge.physics.ox.ac.uk/College.html",
-                "Staircase at Christ Church, Oxford University",R.drawable.pic9,9);
-        dbHelper.addScene("Warner Bro. Studios", "Warner Drive, Leavesden WD25 7LP, UK",
-                "Warner Bros. Studios, Leavesden is an 80-hectare studio complex in Leavesden in Hertfordshire, in southeast England. Formerly known as Leavesden Film Studios, it is a film and media complex owned by Warner Bros. Warner Bros. Studios, Leavesden is one of only a few places in the United Kingdom where large scale film productions can be made. The studios contain approximately 50,000 m2 (538,196 sq ft) of flexible space and is one of the largest and most state-of-the-art secure filmmaking facilities in the world. From 2000, every one of the Harry Potter films was based out of Leavesden Studios over the following ten years.",
-                "https://www.wbstudiotour.co.uk/the-tour-experience/explore#t-2",
-                "Warner Bro. Studios The Great Hall",R.drawable.pic10,10);
-        dbHelper.addScene("Gloucester Cathedral", "12 College Green, Gloucester GL1 2LX, UK",
-                "Gloucester Cathedral, formally the Cathedral Church of St Peter and the Holy and Indivisible Trinity, in Gloucester, England, stands in the north of the city near the River Severn. It originated in 678 or 679 with the foundation of an abbey dedicated to Saint Peter (dissolved by King Henry VIII). The south porch is in the Perpendicular style, with a fan-vaulted roof, as also is the north transept, the south being transitional Decorated Gothic. The cloisters at Gloucester are the earliest surviving fan vaults, having been designed between 1351 and 1377 by Thomas de Canterbury.",
-                "http://www.gloucestercathedral.org.uk/",
-                "Gloucester Cathedral",R.drawable.pic11,11);
-        dbHelper.addScene("Warner Bro. Studios", "Warner Drive, Leavesden WD25 7LP, UK",
-                "Warner Bros. Studios, Leavesden is an 80-hectare studio complex in Leavesden in Hertfordshire, in southeast England. Formerly known as Leavesden Film Studios, it is a film and media complex owned by Warner Bros. Warner Bros. Studios, Leavesden is one of only a few places in the United Kingdom where large scale film productions can be made. The studios contain approximately 50,000 m2 (538,196 sq ft) of flexible space and is one of the largest and most state-of-the-art secure filmmaking facilities in the world. From 2000, every one of the Harry Potter films was based out of Leavesden Studios over the following ten years.",
-                "https://www.wbstudiotour.co.uk/the-tour-experience/explore#t-2",
-                "Warner Bro. Studios Gryffindor Common Room",R.drawable.pic12,12);
-
-        for (int i = 0; i < files.length; i++) {
-            String fileNames = files[i];
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileNames);
-            byte[] imgDataBa = new byte[(int) file.length()];
-
-            DataInputStream dataIs;
-            try {
-                dataIs = new DataInputStream(new FileInputStream(file));
-                dataIs.readFully(imgDataBa);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            short[] shorts = new short[imgDataBa.length / 2];
-            // to turn bytes to shorts as either big endian or little endian.
-            ByteBuffer.wrap(imgDataBa).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts);
-
-            ArrayList<Fingerprint> fingerprints = AudioAnalysis.fingerprint(shorts);
-
-            for (Fingerprint f : fingerprints)
-                dbHelper.addFingerprint(f.getAnchorFrequency(), f.getPointFrequency(), f.getDelta(), f.getAbsoluteTime(), i);
-
-        }
-        */
-        //end comment
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            match = new int[files.length];
-            previous = new int[files.length];
-            for (int i = 0; i < match.length; i++) {
-                previous[i] = 0;
+            match = new SparseIntArray();
+            previous = new SparseIntArray();
+            for (int i = 0; i < match.size(); i++) {
+                previous.put(match.keyAt(i), 0);
             }
+            currentMaximum = -1;
             startRecording();
         }
         else
@@ -259,77 +177,87 @@ public class RecordFragment extends Fragment {
             if (recorder != null) {
                 stopRecording();
                 ArrayList<Fingerprint> fingerprints = AudioAnalysis.fingerprint(audio);
+                for (Fingerprint f : fingerprints)
+                    Log.d("Fingerprint", f.getAnchorFrequency() + " " + f.getPointFrequency() + " " + f.getDelta());
+
                 audio = new short[RECORDER_SAMPLERATE * recordInterval];
                 startRecording();
-                dbHelper = new DatabaseHelper(getContext());
-                HashMap<ArrayList<Integer>, ArrayList<Integer>> targetZoneMap = new HashMap<>();
-                SparseIntArray[] timeCoherencyMap = new SparseIntArray[files.length];
-                for (int i = 0; i < files.length; i++)
-                    timeCoherencyMap[i] = new SparseIntArray();
-                for (Fingerprint f : fingerprints) {
-                    Cursor couples = dbHelper.getData(f.getAnchorFrequency(), f.getPointFrequency(), f.getDelta());
-                    if (couples.moveToFirst()) {
-                        do {
-                            Integer id = couples.getInt(couples.getColumnIndex("scene_id"));
-                            Integer absoluteTime = couples.getInt(couples.getColumnIndex("absolute_time"));
-                            Integer delta = f.getAbsoluteTime() - absoluteTime;
-                            ArrayList<Integer> couple = new ArrayList<>();
-                            couple.add(id);
-                            couple.add(absoluteTime);
-                            ArrayList<Integer> a;
-                            if ((a = targetZoneMap.get(couple)) != null) {
-                                a.add(delta);
-                                targetZoneMap.put(couple, a);
-                            } else {
-                                a = new ArrayList<>();
-                                a.add(delta);
-                                targetZoneMap.put(couple, a);
+
+                final RequestQueue queue = Volley.newRequestQueue(getContext());
+                final Gson gson = new Gson();
+
+                JSONArray fingerprintJsonArray = null;
+                try {
+                    fingerprintJsonArray = new JSONArray(gson.toJson(fingerprints));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                final JsonArrayRequest scoreRequest = new JsonArrayRequest(Request.Method.POST, "http://192.168.1.11/fingerprint_score.php", fingerprintJsonArray, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("I got", "response");
+                        Score[] update = gson.fromJson(response.toString(), new TypeToken<Score[]>() {
+                        }.getType());
+                        for (Score s : update) {
+                            Log.d(Integer.toString(s.getSceneID()), Integer.toString(s.getScore()));
+                            if (s.getScore() > 10 && currentMaximum != s.getSceneID()) {
+                                //display
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject().put("sceneID", s.getSceneID());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                JsonObjectRequest sceneRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.1.11/scene_search.php", jsonObject, new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        final Scene scene = gson.fromJson(response.toString(), new TypeToken<Scene>() {
+                                        }.getType());
+                                        if ( !(RecordFragment.getPrevious().equals(scene.getName())) || (RecentsFragment.getRemoved()==1) ) {
+                                            listener.saveScene(scene);
+                                            RecordFragment.setPrevious(scene.getName());
+                                            RecentsFragment.setRemoved(0);
+                                        }
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                placeholder.removeAllViews();
+                                                List<Scene> matchingScene = new ArrayList<>();
+                                                matchingScene.add(scene);
+                                                RecyclerView showMatchingScene = new RecyclerView(getContext());
+                                                showMatchingScene.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                showMatchingScene.setHasFixedSize(true);
+                                                SceneRecycleViewAdapter showMatchingSceneAdapter = new SceneRecycleViewAdapter(matchingScene, getContext());
+                                                showMatchingScene.setAdapter(showMatchingSceneAdapter);
+                                                placeholder.addView(showMatchingScene);
+                                                TextView footer = new TextView(getContext());
+                                                footer.setGravity(Gravity.CENTER);
+                                                footer.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
+                                                placeholder.addView(footer);
+                                            }
+                                        });
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        error.printStackTrace();
+                                    }
+                                });
+                                queue.add(sceneRequest);
+                                currentMaximum = s.getSceneID();
+                                break;
                             }
-                        } while (couples.moveToNext());
-                    }
-                    couples.close();
-                }
-                dbHelper.close();
-                for (ArrayList<Integer> i : targetZoneMap.keySet()) {
-                    ArrayList<Integer> a = targetZoneMap.get(i);
-                    if (a.size() >= 3)
-                        for (Integer delta : a) {
-                            Integer count = timeCoherencyMap[i.get(0)].get(delta);
-                            timeCoherencyMap[i.get(0)].put(delta, count == 0 ? 1 : count + 1);
                         }
-                }
-                // Currently assume most common delta is the correct delta
-                for (int i = 0; i < match.length; i++) {
-                    SparseIntArray s = timeCoherencyMap[i];
-                    int currentMaxDeltaCount = 0;
-                    for (int j = 0; j < s.size(); j++) {
-                        Integer delta = s.keyAt(j);
-                        if (s.get(delta) >= currentMaxDeltaCount) {
-                            currentMaxDeltaCount = s.get(delta);
-                        }
-                    }
-                    match[i] += currentMaxDeltaCount;
-                }
 
-                int maximum = -1;
-                for (int i = 0; i < match.length; i++) {
-                    if ((match[i] - previous[i]) > 10) {
-                        maximum = i;
-                        break;
-                    }
-                }
+                        }}, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        });
 
-                for (int i = 0; i < match.length; i++) {
-                    previous[i] = match[i];
-                }
-
-                if (maximum > -1 && isRecording) {
-                    if(match[maximum] > 10) {
-                        showAndSaveSceneRunnable = new ShowAndSaveSceneRunnable();
-                        showAndSaveSceneRunnable.setMatch(maximum);
-                        showAndSaveSceneRunnable.run();
-                    }
-                }
+                queue.add(scoreRequest);
             }
         }
     }
@@ -353,60 +281,6 @@ public class RecordFragment extends Fragment {
 
         void stop() {
             isStopped = true;
-        }
-    }
-
-    private class ShowAndSaveSceneRunnable implements Runnable {
-        int match = -1;
-        String name;
-        String address;
-        String details;
-        String link;
-        String query;
-        int imageID;
-
-        @Override
-        public void run() {
-            DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-            final Cursor sceneInfo = dbHelper.getSceneInfo(match);
-            if (sceneInfo.moveToFirst()) {
-                name = sceneInfo.getString(sceneInfo.getColumnIndex("name"));
-                address = sceneInfo.getString(sceneInfo.getColumnIndex("address"));
-                details = sceneInfo.getString(sceneInfo.getColumnIndex("details"));
-                link = sceneInfo.getString(sceneInfo.getColumnIndex("link"));
-                query = sceneInfo.getString(sceneInfo.getColumnIndex("query"));
-                imageID = sceneInfo.getInt(sceneInfo.getColumnIndex("image_id"));
-            }
-            sceneInfo.close();
-            dbHelper.close();
-            final Scene scene = new Scene(name, address, details, link, query, imageID, match);
-            if ( !(RecordFragment.getPrevious().equals(name)) || (RecentsFragment.getRemoved()==1) ) {
-                listener.saveScene(scene);
-                RecordFragment.setPrevious(name);
-                RecentsFragment.setRemoved(0);
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    placeholder.removeAllViews();
-                    List<Scene> matchingScene = new ArrayList<>();
-                    matchingScene.add(scene);
-                    RecyclerView showMatchingScene = new RecyclerView(getContext());
-                    showMatchingScene.setLayoutManager(new LinearLayoutManager(getContext()));
-                    showMatchingScene.setHasFixedSize(true);
-                    SceneRecycleViewAdapter showMatchingSceneAdapter = new SceneRecycleViewAdapter(matchingScene, getContext());
-                    showMatchingScene.setAdapter(showMatchingSceneAdapter);
-                    placeholder.addView(showMatchingScene);
-                    TextView footer = new TextView(getContext());
-                    footer.setGravity(Gravity.CENTER);
-                    footer.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlace the phone close to the audio");
-                    placeholder.addView(footer);
-                }
-            });
-        }
-
-        public void setMatch(int match) {
-            this.match = match;
         }
     }
 
