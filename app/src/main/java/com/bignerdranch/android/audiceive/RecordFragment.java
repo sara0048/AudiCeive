@@ -57,7 +57,6 @@ public class RecordFragment extends Fragment {
     private Thread recordingThread = null;
     private boolean isRecording = false;
     private int recordInterval;
-    private int currentMaximum;
     private SparseIntArray match;
     private TimerTask recordTask;
     private RecordRunnable runnable;
@@ -134,7 +133,6 @@ public class RecordFragment extends Fragment {
             for (int i = 0; i < match.size(); i++) {
                 previous.put(match.keyAt(i), 0);
             }
-            currentMaximum = -1;
             startRecording();
         }
         else
@@ -191,7 +189,7 @@ public class RecordFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                final JsonArrayRequest scoreRequest = new JsonArrayRequest(Request.Method.POST, "http://192.168.1.11/fingerprint_score.php", fingerprintJsonArray, new Response.Listener<JSONArray>() {
+                final JsonArrayRequest scoreRequest = new JsonArrayRequest(Request.Method.POST, "http://192.168.1.12/fingerprint_score.php", fingerprintJsonArray, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("I got", "response");
@@ -199,7 +197,7 @@ public class RecordFragment extends Fragment {
                         }.getType());
                         for (Score s : update) {
                             Log.d(Integer.toString(s.getSceneID()), Integer.toString(s.getScore()));
-                            if (s.getScore() > 10 && currentMaximum != s.getSceneID()) {
+                            if (s.getScore() > 10) {
                                 //display
                                 JSONObject jsonObject = null;
                                 try {
@@ -207,7 +205,7 @@ public class RecordFragment extends Fragment {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                JsonObjectRequest sceneRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.1.11/scene_search.php", jsonObject, new Response.Listener<JSONObject>() {
+                                JsonObjectRequest sceneRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.1.12/scene_search.php", jsonObject, new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         final Scene scene = gson.fromJson(response.toString(), new TypeToken<Scene>() {
@@ -243,7 +241,6 @@ public class RecordFragment extends Fragment {
                                     }
                                 });
                                 queue.add(sceneRequest);
-                                currentMaximum = s.getSceneID();
                                 break;
                             }
                         }
