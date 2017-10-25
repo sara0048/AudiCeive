@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +56,8 @@ public class RecordFragment extends Fragment {
     private Thread recordingThread = null;
     private boolean isRecording = false;
     private int recordInterval;
-    private SparseIntArray match;
     private TimerTask recordTask;
     private RecordRunnable runnable;
-    private SparseIntArray previous;
     private MyInterface listener;
     private LinearLayout placeholder;
     private static String previoustitle="";
@@ -128,11 +125,6 @@ public class RecordFragment extends Fragment {
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            match = new SparseIntArray();
-            previous = new SparseIntArray();
-            for (int i = 0; i < match.size(); i++) {
-                previous.put(match.keyAt(i), 0);
-            }
             startRecording();
         }
         else
@@ -150,8 +142,15 @@ public class RecordFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        if (!isRecording && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)
+        if (!isRecording && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            //initialize AudioRecord if not yet initialized successfully
+            if (recorder.getState() == 0) {
+                recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                        RECORDER_SAMPLERATE, RECORDER_CHANNELS,
+                        RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
+            }
             startRecording();
+        }
     }
 
     @Override
