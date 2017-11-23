@@ -188,7 +188,7 @@ public class RecordFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                final JsonArrayRequest scoreRequest = new JsonArrayRequest(Request.Method.POST, "http://192.168.1.12/fingerprint_score.php", fingerprintJsonArray, new Response.Listener<JSONArray>() {
+                final JsonArrayRequest scoreRequest = new JsonArrayRequest(Request.Method.POST, "http://155.69.100.82/fingerprint_score.php", fingerprintJsonArray, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("I got", "response");
@@ -204,7 +204,7 @@ public class RecordFragment extends Fragment {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                JsonObjectRequest sceneRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.1.12/scene_search.php", jsonObject, new Response.Listener<JSONObject>() {
+                                JsonObjectRequest sceneRequest = new JsonObjectRequest(Request.Method.POST, "http://155.69.100.82/scene_search.php", jsonObject, new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         final Scene scene = gson.fromJson(response.toString(), new TypeToken<Scene>() {
@@ -239,6 +239,7 @@ public class RecordFragment extends Fragment {
                                         error.printStackTrace();
                                     }
                                 });
+
                                 queue.add(sceneRequest);
                                 break;
                             }
